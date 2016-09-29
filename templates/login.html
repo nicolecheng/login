@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+  
+  <form action="/auth" method="POST">
+    
+  <head>
+    <title> LOGIN PAGE </title>
+  </head>
+
+  <body>
+    <center>
+      <h1> {{ success }} </h1>
+      <br><br>
+      {{mas}}
+    </center>
+    
+    <form action="/auth">
+      <br><br>
+      Su nombre, por favor:
+      <input type="text" name="username">
+      <br><br>
+      Y ahora su contrasena:
+      <input type="text" name="pass">
+      <br><br>
+      <input type="submit" name="sub" value="Submit">
+    </form>
+  </body>
+
+</html>

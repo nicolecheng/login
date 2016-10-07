@@ -1,26 +1,36 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, url_for
 import hashlib
+
 app = Flask(__name__)    #create Flask object
+app.secret_key = "lmao"
 
 d={}
+user=""
 
 @app.route("/")
 def home():
     convertDict()
+    if(user in session):
+        return welcome()
+    else:
+        login()
+        
+    
+@app.route("/login/", methods=["POST"])
+def login():
     return render_template( 'login.html',message="Bienvenido!" )
 
 
-@app.route("/auth", methods=["POST"])
+@app.route("/auth/", methods=["POST"])
 def authenticate():
     convertDict()
     if request.method=="POST":
         u=request.form["username"]
+        user=u
         p=hashbrowns(request.form["pass"])
         if u in d.keys():
             if p==d[u][:56]:
-                return render_template("loggedin.html", message="you made it!")
-            #elif len(p) != len(d[u]):
-            #    return render_template("loggedin.html", message=len(d[u]))
+                return welcome()
             else:
                 return render_template("login.html",message="Hmm... it seems that your password was incorrect. try again.")
         else:
@@ -28,7 +38,7 @@ def authenticate():
         return "YES"
 
 
-@app.route("/register",methods=["POST"])
+@app.route("/register/",methods=["POST"])
 def registration():
     if request.method=="POST":
         u=request.form["username"]
@@ -44,6 +54,9 @@ def registration():
                 return render_template("login.html",message="Success! Your account has been created.")
         return "YES"
 
+@app.route("/welcome/",methods=["POST"])
+def welcome():
+    return render_template("loggedin.html", message="you made it!")
 
 def convertDict():
     f = open("data/accounts.csv")
@@ -67,34 +80,3 @@ if __name__ == "__main__": #false if this file imported as module
     #enable debugging, auto-restarting of server when this file is modified
     app.debug = True 
     app.run()
-
-
-
-    '''
-    if request.method=="POST":
-        u=request.form["username"]
-        p=hashbrowns(request.form["pass"])
-        
-        log=request.form["log"]
-        reg=request.form["reg"]
-        if u in d.keys():
-            if log:
-                if p==d[u]:
-                    return render_template("loggedin.html", message="you made it!")
-                else:
-                    return render_template("login.html",message="Hmm... it seems that your password was incorrect. try again.")
-            elif reg:
-                return render_template("login.html",message="Hmm... that username is already taken. try a different one.")
-        else:
-            if log:
-                return render_template("login.html",message="Hmm... that username doesn't seem to exist.")
-            elif reg:
-                if len(u) < 1 or len(p) < 1:
-                    return render_template("login.html",message="Hmm... please enter a valid username and password")
-                else:
-                    addAccount(u,p)
-                    convertDict("data/accounts.csv")
-                    return render_template("login.html",message="Success! Your account has been created.")
-        return "YES"
-
-'''

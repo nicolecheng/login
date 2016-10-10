@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title> random test page </title>
+    <h1> are you logged in or nah? </h1>
+  </head>
+
+  <body>
+    heya, {{message}}
+  </body>
+
+  {{log}}
+
+</html>

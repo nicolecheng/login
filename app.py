@@ -13,16 +13,17 @@ def home():
     if(user in session):
         return welcome()
     else:
-        login()
+        return login()
         
     
 @app.route("/login/", methods=["POST"])
 def login():
     return render_template( 'login.html',message="Bienvenido!" )
 
-
+                
 @app.route("/auth/", methods=["POST"])
 def authenticate():
+    global user
     convertDict()
     if request.method=="POST":
         u=request.form["username"]
@@ -30,6 +31,7 @@ def authenticate():
         p=hashbrowns(request.form["pass"])
         if u in d.keys():
             if p==d[u][:56]:
+                session[user]=p
                 return welcome()
             else:
                 return render_template("login.html",message="Hmm... it seems that your password was incorrect. try again.")
@@ -56,7 +58,21 @@ def registration():
 
 @app.route("/welcome/",methods=["POST"])
 def welcome():
-    return render_template("loggedin.html", message="you made it!")
+    return render_template("loggedin.html", message="you made it, "+user+"!")
+
+@app.route("/other/")
+def other():
+    if(user in session):
+        return render_template("other.html", message="you are logged in as "+user+".")
+    else:
+        return render_template("other.html", message="you are not logged in")
+
+
+@app.route("/logout/",methods=["POST"])
+def logout():
+    if(user in session):
+        session.pop(user)
+    return home()
 
 def convertDict():
     f = open("data/accounts.csv")
